@@ -33,6 +33,8 @@ class _TaskFormState extends State<TaskForm> {
         description: _descCtrl.text,
         createdAt: widget.task?.createdAt ?? DateTime.now(),
         isCompleted: widget.task?.isCompleted ?? false,
+        completedAt: widget.task?.completedAt,
+        updatedAt: widget.task?.updatedAt ?? [],
       );
       Navigator.pop(context, task);
     }

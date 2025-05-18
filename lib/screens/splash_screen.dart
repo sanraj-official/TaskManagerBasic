@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_basic/Utils/custom_decoration.dart';
 import '../services/user_preferences.dart';
 import 'name_entry_screen.dart';
 import 'task_list_screen.dart';
@@ -34,8 +35,27 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    return  Scaffold(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: CustomDecoration.customBackgroundDecoration(),
+          child: const Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage("lib/assets/appIcon.png"),
+                height: 150,
+                width: 150,
+              ),
+              Text("Welcome to Task Manager", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color:Colors.indigo),),
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: LinearProgressIndicator(color: Colors.white70,),
+              ),
+            ],
+          ))
+      ),
     );
   }
 }

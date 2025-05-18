@@ -121,18 +121,22 @@ class _TaskTileState extends State<TaskTile> {
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
+                PopupMenuButton<Menu>(
                   color: Colors.white,
                   onSelected: (value) {
-                    if (value == 'edit') {
+                    if (value == Menu.edit) {
                       widget.onEdit();
-                    } else if (value == 'delete') {
+                    } else if (value == Menu.delete) {
                       widget.onDelete();
+                    }
+                    else if (value == Menu.viewLogs) {
+                      _showTaskDetails(context, widget.task);
                     }
                   },
                   itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    PopupMenuItem(value: Menu.edit, child: Text('Edit')),
+                    PopupMenuItem(value: Menu.delete, child: Text('Delete')),
+                    PopupMenuItem(value: Menu.viewLogs, child: Text('View Logs')),
                   ],
                 ),
               ],
@@ -144,4 +148,152 @@ class _TaskTileState extends State<TaskTile> {
       ),
     );
   }
+
+  void _showTaskDetails(BuildContext context, Task task) {
+    final ScrollController scrollController = ScrollController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            padding:  const EdgeInsets.only(top: 8,bottom: 8,right: 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header Row with Close Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 5,),
+                    const Text(
+                      "Task Details",
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(context,rootNavigator: true).pop(),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                // Scrollable Content
+                Container(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
+                  child: Scrollbar(
+                    controller: scrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    thickness: 12,
+                    interactive: true,
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Padding(
+                        padding:  const EdgeInsets.only(right: 16,left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              task.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              task.description ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                color: Colors.black87
+                              ),
+                            ),
+                            task.description !=null && task.description!.isNotEmpty? const SizedBox(height: 8):Container(),
+
+                            getUpdateLog(task)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+  Widget getUpdateLog(Task task){
+    Widget basicInfo = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Created at: ${CustomDecoration.dateTimeFormatterView(task.createdAt)}",
+          style: const TextStyle(color: Colors.black45),
+          maxLines: null,
+          overflow: TextOverflow.visible,
+        ),
+        Text(
+          "Completed : ${task.isCompleted ? "Yes" : "No"}",
+          style: const TextStyle(color: Colors.black45),
+          maxLines: null,
+          overflow: TextOverflow.visible,
+        ),
+        task.isCompleted?Text(
+          "Completed at : ${task.completedAt != null ? CustomDecoration.dateTimeFormatterView(task.completedAt!) : "Not Completed"}",
+          style: const TextStyle(color: Colors.black45),
+          maxLines: null,
+          overflow: TextOverflow.visible,
+        ):Container(),
+        Text("Updated : ${task.updatedAt.isEmpty ? "Never" : task.updatedAt.length > 1 ? "${task.updatedAt.length} times" : "Once"}",
+          style: const TextStyle(color: Colors.black45),
+          maxLines: null,
+          overflow: TextOverflow.visible,
+        ),
+      ],
+    );
+    if(task.updatedAt.isEmpty){
+      return  basicInfo ;
+    }
+    else{
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          basicInfo,
+          const SizedBox(height: 8),
+          const Text(
+            "Updated on",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: task.updatedAt.length,
+            itemBuilder: (context, index) {
+              return Text(
+                "${index + 1}.>  ${CustomDecoration.dateTimeFormatterView(task.updatedAt[index])}",
+                style: const TextStyle(color: Colors.black45),
+              );
+            },
+          ),
+        ],
+      );
+    }
+
+  }
+}
+enum Menu{
+  edit,
+  delete,
+  viewLogs,
 }

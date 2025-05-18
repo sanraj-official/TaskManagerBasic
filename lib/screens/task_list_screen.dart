@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:task_manager_basic/Utils/custom_decoration.dart';
 import '../services/user_preferences.dart';
@@ -15,7 +17,8 @@ class TaskListScreen extends StatefulWidget {
 
 class _TaskListScreenState extends State<TaskListScreen> {
   List<Task> _tasks = [];
-  String _filter = 'all';
+  Filter _filter = Filter.all;
+  String message = 'No tasks available';
 
   @override
   void initState() {
@@ -24,8 +27,17 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   Future<void> _loadTasks() async {
-    List<Task> tasks = await TaskDatabase.instance.getTasks();
-    setState(() => _tasks = tasks);
+    try {
+      List<Task> tasks = await TaskDatabase.instance.getTasks();
+      setState(() => _tasks = tasks);
+    }
+    catch (e) {
+      // Handle error
+      log('Error loading tasks: $e');
+      setState(() {
+        message = 'Failed to load tasks';
+      });
+    }
   }
 
   Future<void> _addOrEditTask([Task? task]) async {
@@ -63,8 +75,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
       description: task.description,
       createdAt: task.createdAt,
       isCompleted: !task.isCompleted,
+      updatedAt: task.updatedAt,
       completedAt: !task.isCompleted?DateTime.now():null,
-      updatedAt: task.updatedAt..add(DateTime.now())
     );
     await TaskDatabase.instance.updateTask(updated);
     _loadTasks();
@@ -73,32 +85,49 @@ class _TaskListScreenState extends State<TaskListScreen> {
   @override
   Widget build(BuildContext context) {
     final userName = UserPreferences.getUserName() ?? '';
-    final filteredTasks = _filter == 'completed'
-        ? _tasks.where((t) => t.isCompleted).toList()
-        : _filter == 'incomplete'
-            ? _tasks.where((t) => !t.isCompleted).toList()
-            : _tasks;
+    List<Task> filteredTasks ;
+    try {
+      filteredTasks = _filter == Filter.completed
+          ? _tasks.where((t) => t.isCompleted).toList()
+          : _filter == Filter.incomplete
+          ? _tasks.where((t) => !t.isCompleted).toList()
+          : _tasks;
+
+      if(filteredTasks.isEmpty && _filter != Filter.all) {
+        message = 'No ${_filter.name} tasks available';
+      } else {
+        message = 'No tasks available';
+      }
+    }
+    catch (e) {
+      // Handle error
+      log('Error filtering tasks: $e');
+      message = 'Failed to load ${_filter.name} tasks';
+      filteredTasks = [];
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor:CustomDecoration.appBarColor,
         title: Text('Welcome back, $userName!'),
         actions: [
-          PopupMenuButton<String>(
+          PopupMenuButton<Filter>(
             onSelected: (value) {
               setState(() => _filter = value);
             },
             itemBuilder: (_) => const [
-              PopupMenuItem(value: 'all', child: Text('All')),
-              PopupMenuItem(value: 'completed', child: Text('Completed')),
-              PopupMenuItem(value: 'incomplete', child: Text('Incomplete')),
+              PopupMenuItem(value: Filter.all, child: Text('All')),
+              PopupMenuItem(value: Filter.completed, child: Text('Completed')),
+              PopupMenuItem(value: Filter.incomplete, child: Text('Incomplete')),
             ],
           ),
         ],
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         decoration: CustomDecoration.customBackgroundDecoration(),
-        child: ListView.builder(
+        child: filteredTasks.isEmpty?Center(child: Text(message)):ListView.builder(
           itemCount: filteredTasks.length,
           itemBuilder: (_, i) => TaskTile(
             task: filteredTasks[i],
@@ -115,4 +144,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
       ),
     );
   }
+}
+
+enum Filter{
+  all,
+  completed,
+  incomplete,
 }

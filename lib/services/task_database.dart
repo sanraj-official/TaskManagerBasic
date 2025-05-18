@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/task_model.dart';
@@ -45,9 +47,11 @@ class TaskDatabase {
   }
 
   Future<int> updateTask(Task task) async {
+    log(' task: ${task.updatedAt} ${task.updatedAt.length} ') ;
     task = task.copyWith(
       updatedAt: [...task.updatedAt, DateTime.now()]
     );
+    log('Updated task: ${task.updatedAt} ${task.updatedAt.length} ${task.updatedAt.last}') ;
     final db = _database!;
     return await db.update(
       'tasks',
