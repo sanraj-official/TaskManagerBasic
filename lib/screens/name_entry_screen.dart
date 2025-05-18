@@ -27,7 +27,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Welcome'),backgroundColor: const Color(0xffBF78FA),),
+      appBar: AppBar(title: const Text('Welcome'),backgroundColor: CustomDecoration.appBarColor,),
       body: Container(
         decoration: CustomDecoration.customBackgroundDecoration(),
         child: Padding(

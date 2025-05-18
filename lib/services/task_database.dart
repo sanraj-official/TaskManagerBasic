@@ -24,7 +24,9 @@ class TaskDatabase {
             title TEXT NOT NULL,
             description TEXT,
             createdAt TEXT NOT NULL,
-            isCompleted INTEGER NOT NULL
+            isCompleted INTEGER NOT NULL,
+            updatedAt TEXT NOT NULL,
+            completedAt TEXT 
           )
         ''');
       },
@@ -43,6 +45,9 @@ class TaskDatabase {
   }
 
   Future<int> updateTask(Task task) async {
+    task = task.copyWith(
+      updatedAt: [...task.updatedAt, DateTime.now()]
+    );
     final db = _database!;
     return await db.update(
       'tasks',

@@ -63,6 +63,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
       description: task.description,
       createdAt: task.createdAt,
       isCompleted: !task.isCompleted,
+      completedAt: !task.isCompleted?DateTime.now():null,
+      updatedAt: task.updatedAt..add(DateTime.now())
     );
     await TaskDatabase.instance.updateTask(updated);
     _loadTasks();
@@ -79,7 +81,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:const Color(0xffBF78FA),
+        backgroundColor:CustomDecoration.appBarColor,
         title: Text('Welcome back, $userName!'),
         actions: [
           PopupMenuButton<String>(

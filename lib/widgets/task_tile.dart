@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:task_manager_basic/Utils/custom_decoration.dart';
 import '../models/task_model.dart';
 
 class TaskTile extends StatefulWidget {
@@ -36,13 +37,13 @@ class _TaskTileState extends State<TaskTile> {
         padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 5),
         decoration: BoxDecoration(
           gradient: widget.task.isCompleted
-              ? const LinearGradient(
-                  colors: [ Color(0XFF9C4EDC), Color(0xFF5D80E1)],
+              ?  LinearGradient(
+                  colors: [ const Color(0XFF9C4EDC), const Color(0xFF5D80E1).withOpacity(0.5)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 )
-              : const LinearGradient(
-                  colors: [Color(0XFFD91818), Color(0XFFFF4040)],
+              : LinearGradient(
+                  colors: [const Color(0XFFD91818).withOpacity(0.8), const Color(0XFFFF4040).withOpacity(0.1)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -62,74 +63,82 @@ class _TaskTileState extends State<TaskTile> {
             width: 1.5,        // Border width
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Checkbox(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              side: const BorderSide(
-                color: Colors.black54, // Border color
-                width: 1.5,       // Border width
-              ),
-              activeColor: Colors.yellowAccent,
-              checkColor: Colors.redAccent,
-              value: widget.task.isCompleted,
-              onChanged: (_) => widget.onToggle(),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 20, // Adjust height as needed
-                    child: (widget.task.title.length > 45)
-                        ? Marquee(
-                      text: widget.task.title,
-                      velocity: 30.0,
-                      blankSpace: 40.0,
-                      pauseAfterRound: const Duration(seconds: 1),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        decoration: widget.task.isCompleted ? TextDecoration.lineThrough : null,
-                      ),
-                    )
-                        : Text(
-                      widget.task.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        decoration: widget.task.isCompleted ? TextDecoration.lineThrough : null,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.task.description ?? '',
-                    style: const TextStyle(color: Colors.black87),
-                    maxLines: _isExpanded ? null : 2,
-                    overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                  side: const BorderSide(
+                    color: Colors.black54, // Border color
+                    width: 1.5,       // Border width
                   ),
-                ],
-              ),
-            ),
-            PopupMenuButton<String>(
-              color: Colors.white,
-              onSelected: (value) {
-                if (value == 'edit') {
-                  widget.onEdit();
-                } else if (value == 'delete') {
-                  widget.onDelete();
-                }
-              },
-              itemBuilder: (_) => const [
-                PopupMenuItem(value: 'edit', child: Text('Edit')),
-                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  activeColor: Colors.yellowAccent,
+                  checkColor: Colors.redAccent,
+                  value: widget.task.isCompleted,
+                  onChanged: (_) => widget.onToggle(),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 20, // Adjust height as needed
+                        child: (widget.task.title.length > 45)
+                            ? Marquee(
+                          text: widget.task.title,
+                          velocity: 30.0,
+                          blankSpace: 40.0,
+                          pauseAfterRound: const Duration(seconds: 1),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            decoration: widget.task.isCompleted ? TextDecoration.lineThrough : null,
+                          ),
+                        )
+                            : Text(
+                          widget.task.title,
+                          style: TextStyle(
+                            color: Colors.yellowAccent,
+                            fontWeight: FontWeight.bold,
+                            decoration: widget.task.isCompleted ? TextDecoration.lineThrough : null,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.task.description ?? '',
+                        style: const TextStyle(color: Colors.greenAccent),
+                        maxLines: _isExpanded ? null : 2,
+                        overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  color: Colors.white,
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      widget.onEdit();
+                    } else if (value == 'delete') {
+                      widget.onDelete();
+                    }
+                  },
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
+                ),
               ],
             ),
+            Text("Created at: ${CustomDecoration.dateTimeFormatterView(widget.task.createdAt)}",
+                style: const TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
       ),

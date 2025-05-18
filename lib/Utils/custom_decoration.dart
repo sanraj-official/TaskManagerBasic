@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomDecoration{
 
@@ -35,6 +36,28 @@ class CustomDecoration{
         borderSide: const BorderSide(color: Colors.indigo, width: 2),
       ),
     );
+  }
+
+  static Color appBarColor = const Color(0xffB458ED);
+
+  static String dateTimeFormatterView(dynamic rawDate){
+    if(rawDate == null)
+      {
+        return "NA";
+      }
+
+    DateTime dateTime ;
+    if (rawDate is String){
+      dateTime = DateTime.parse(rawDate);
+    }
+    else if (rawDate is DateTime){
+      dateTime = rawDate;
+    }
+    else{
+      return "NA";
+    }
+    final formatter = DateFormat('dd MMM yyyy hh:mm a');
+    return formatter.format(dateTime);
   }
 
 }
