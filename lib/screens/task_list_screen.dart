@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_basic/Utils/custom_decoration.dart';
 import '../services/user_preferences.dart';
 import '../services/task_database.dart';
 import '../models/task_model.dart';
@@ -31,6 +32,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
     final result = await showModalBottomSheet<Task>(
       context: context,
       isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(26),
+          topRight: Radius.circular(26),
+        ),
+      ),
       builder: (_) => TaskForm(task: task),
     );
 
@@ -72,6 +79,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor:const Color(0xffBF78FA),
         title: Text('Welcome back, $userName!'),
         actions: [
           PopupMenuButton<String>(
@@ -86,17 +94,21 @@ class _TaskListScreenState extends State<TaskListScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: filteredTasks.length,
-        itemBuilder: (_, i) => TaskTile(
-          task: filteredTasks[i],
-          onEdit: () => _addOrEditTask(filteredTasks[i]),
-          onDelete: () => _deleteTask(filteredTasks[i]),
-          onToggle: () => _toggleComplete(filteredTasks[i]),
+      body: Container(
+        decoration: CustomDecoration.customBackgroundDecoration(),
+        child: ListView.builder(
+          itemCount: filteredTasks.length,
+          itemBuilder: (_, i) => TaskTile(
+            task: filteredTasks[i],
+            onEdit: () => _addOrEditTask(filteredTasks[i]),
+            onDelete: () => _deleteTask(filteredTasks[i]),
+            onToggle: () => _toggleComplete(filteredTasks[i]),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addOrEditTask(),
+        backgroundColor: const Color(0xffBF78FA),
         child: const Icon(Icons.add),
       ),
     );

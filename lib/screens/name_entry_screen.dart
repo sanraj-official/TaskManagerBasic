@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_basic/Utils/custom_decoration.dart';
 import '../services/user_preferences.dart';
 import 'task_list_screen.dart';
 
@@ -26,16 +27,24 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Welcome')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text('Enter your name:', style: TextStyle(fontSize: 18)),
-            TextField(controller: _controller),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: _submitName, child: const Text('Continue')),
-          ],
+      appBar: AppBar(title: const Text('Welcome'),backgroundColor: const Color(0xffBF78FA),),
+      body: Container(
+        decoration: CustomDecoration.customBackgroundDecoration(),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              const Text('Enter your name :', style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500, color: Colors.white )),
+              const SizedBox(height: 20),
+              TextField(controller: _controller,
+              decoration: CustomDecoration.customInputDecoration()),
+              const SizedBox(height: 20),
+              ElevatedButton(onPressed: _submitName,
+                style: ButtonStyle( backgroundColor: MaterialStateProperty.all(const Color(0XFF007BFF)), ),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
         ),
       ),
     );

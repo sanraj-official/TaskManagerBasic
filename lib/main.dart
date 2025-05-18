@@ -15,11 +15,13 @@ class TaskManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Task Manager',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo),
-      home: const SplashScreen(),
+    return SafeArea(
+      child: MaterialApp(
+        title: 'Task Manager',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.indigo),
+        home: const SplashScreen(),
+      ),
     );
   }
 }

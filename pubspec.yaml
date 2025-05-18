@@ -37,6 +37,9 @@ dependencies:
   # For saving simple preferences (like username)
   shared_preferences: ^2.2.2
 
+  # For long titles
+  marquee: ^2.2.3
+
 
 
   # The following adds the Cupertino Icons font to your application.
