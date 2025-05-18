@@ -19,6 +19,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   List<Task> _tasks = [];
   Filter _filter = Filter.all;
   String message = 'No tasks available';
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   Future<void> _loadTasks() async {
+    setState(() => isLoading = true);
     try {
       List<Task> tasks = await TaskDatabase.instance.getTasks();
       setState(() => _tasks = tasks);
@@ -38,6 +40,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
         message = 'Failed to load tasks';
       });
     }
+    // await Future.delayed(const Duration(seconds: 5)); // just to test loading case
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> _addOrEditTask([Task? task]) async {
@@ -127,7 +133,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: CustomDecoration.customBackgroundDecoration(),
-        child: filteredTasks.isEmpty?Center(child: Text(message)):ListView.builder(
+        child: isLoading?loadingWidget():filteredTasks.isEmpty?Center(child: Text(message)):ListView.builder(
           itemCount: filteredTasks.length,
           itemBuilder: (_, i) => TaskTile(
             task: filteredTasks[i],
@@ -143,6 +149,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Widget loadingWidget(){
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+      SizedBox(height: 20),
+      CircularProgressIndicator(),
+       SizedBox(height: 20),
+      Text("Loading ...", style:  TextStyle(fontSize: 16)),
+
+    ],);
   }
 }
 
