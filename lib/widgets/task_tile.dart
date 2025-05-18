@@ -136,7 +136,7 @@ class _TaskTileState extends State<TaskTile> {
                   itemBuilder: (_) => const [
                     PopupMenuItem(value: Menu.edit, child: Text('Edit')),
                     PopupMenuItem(value: Menu.delete, child: Text('Delete')),
-                    PopupMenuItem(value: Menu.viewLogs, child: Text('View Logs')),
+                    PopupMenuItem(value: Menu.viewLogs, child: Text('View Details')),
                   ],
                 ),
               ],
